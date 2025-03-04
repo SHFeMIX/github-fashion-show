@@ -1,9 +1,13 @@
 <template>
   <VueUiSparkbar :dataset="dataset" style="width: 300px" />
   <VueUiSparkHistogram :dataset="dataset2" style="width: 900px" />
+  {{ JSON.stringify(repoData) }}
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
+import octokit from "@/services"
+
 import {
   VueUiSparkbar,
   type VueUiSparkbarDatasetItem,
@@ -51,5 +55,17 @@ const dataset2: VueUiSparkHistogramDatasetItem[] = [
   { "value": 0.3, "valueLabel": "30%", "timeLabel": "19:00", "intensity": 0.3 },
   { "value": 0.2, "valueLabel": "20%", "timeLabel": "20:00", "intensity": 0.2 }
 ]
+
+const repoData = ref()
+
+onMounted(async () => {
+  repoData.value = await octokit.request('GET /repos/{owner}/{repo}', {
+    owner: 'SHFeMIX',
+    repo: 'github-fashion-show',
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  })
+})
 
 </script>
